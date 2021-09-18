@@ -33,5 +33,23 @@ namespace StarChart.Controllers
             // set the Satellites props to any CO 
             return Ok(celestialObject);
         }
+
+        [HttpGet("{name}")]
+        public IActionResult GetByName(string name)
+        {
+            var celestialObject = _context.CelestialObjects.Where(n => n.Name.Equals(name)).ToList();
+
+            if (celestialObject == null)
+            {
+                return NotFound();
+            }
+
+            foreach (var c in celestialObject)
+            {
+                c.Satellites = _context.CelestialObjects.Where(o => o.OrbitedObjectId == c.Id).ToList();
+            }
+
+            return Ok(celestialObject);
+        }
     }
 }

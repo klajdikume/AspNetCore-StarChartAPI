@@ -8,7 +8,7 @@ using StarChart.Models;
 
 namespace StarChart.Controllers
 {
-    [Route("")]
+    [Route("api/[controller]")]
     [ApiController]
     public class CelestialObjectController : ControllerBase
     {
@@ -73,6 +73,26 @@ namespace StarChart.Controllers
             _context.SaveChanges();
 
             return CreatedAtRoute("GetById", new { Id = celestialObject.Id }, celestialObject);
+        }
+
+        [HttpPost("{id}")]
+        public IActionResult Update(int id, CelestialObject celestialObject)
+        {
+            var existingCelestialObject = _context.CelestialObjects.Where(i => i.Id == id).FirstOrDefault();
+
+            if (celestialObject == null)
+            {
+                return NotFound();
+            }
+
+            existingCelestialObject.Name = celestialObject.Name;
+            existingCelestialObject.OrbitalPeriod = celestialObject.OrbitalPeriod;
+            existingCelestialObject.OrbitedObjectId = celestialObject.OrbitedObjectId;
+
+            _context.Update(existingCelestialObject);
+            _context.SaveChanges();
+
+            return NoContent();
         }
     }
 }
